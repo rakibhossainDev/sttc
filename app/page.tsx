@@ -18,28 +18,8 @@ export default async function Home() {
   return (
     <div className="flex-1 w-full overflow-y-auto bg-gray-50/50 pb-20">
       
-      {/* Categories Filter (Top) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-6">
-        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-2 md:p-3">
-          <div className="flex overflow-x-auto gap-2 md:gap-3 snap-x pb-2 md:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
-            {categories.map((cat, idx) => (
-              <button 
-                key={idx}
-                className={`snap-start whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
-                  idx === 0 
-                  ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' 
-                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-gray-100'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
-          </div>
-        </section>
-      </div>
-
       {/* Hero Section */}
-      <section className="w-full bg-gradient-to-br from-blue-600 to-blue-800 text-white py-12 md:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+      <section className="w-full bg-gradient-to-br from-blue-600 to-blue-800 text-white py-12 md:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden mb-6 md:mb-10">
         {/* Subtle background decoration */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-white opacity-5 blur-3xl"></div>
         <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-blue-400 opacity-20 blur-3xl"></div>
@@ -63,8 +43,26 @@ export default async function Home() {
       </section>
 
       {/* Main Content Wrapper */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-12 relative z-20 space-y-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 space-y-12">
         
+        {/* Categories Filter */}
+        <section className="bg-white rounded-2xl shadow-sm border border-gray-100 p-2 md:p-3 mb-8">
+          <div className="flex overflow-x-auto gap-2 md:gap-3 snap-x pb-2 md:pb-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            {categories.map((cat, idx) => (
+              <button 
+                key={idx}
+                className={`snap-start whitespace-nowrap px-5 py-2.5 rounded-full text-sm font-semibold transition-all ${
+                  idx === 0 
+                  ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20' 
+                  : 'bg-gray-50 text-gray-600 hover:bg-gray-100 hover:text-gray-900 border border-gray-100'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        </section>
+
         {/* Popular Courses */}
         <section id="courses">
           <div className="flex justify-between items-center mb-6">
