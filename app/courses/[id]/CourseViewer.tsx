@@ -2,27 +2,26 @@
 
 import { useState } from "react";
 import { PlayCircle, FileText, Download, Menu, X, ChevronRight, ChevronDown } from "lucide-react";
-import Link from "next/link";
 
-export default function CourseViewer({ course, lessons }: { course: any, lessons: any[] }) {
+export default function CourseViewer({ course, modules, lessons }: { course: any, modules: any[], lessons: any[] }) {
   const [activeLesson, setActiveLesson] = useState<any | null>(lessons.length > 0 ? lessons[0] : null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
-  // Group lessons by module
-  const modules = lessons.reduce((acc: any, lesson: any) => {
-    if (!acc[lesson.module_title]) {
-      acc[lesson.module_title] = [];
+  // Group lessons by module.id
+  const lessonsByModule = lessons.reduce((acc: any, lesson: any) => {
+    if (!acc[lesson.module_id]) {
+      acc[lesson.module_id] = [];
     }
-    acc[lesson.module_title].push(lesson);
+    acc[lesson.module_id].push(lesson);
     return acc;
   }, {});
 
-  const [expandedModules, setExpandedModules] = useState<Record<string, boolean>>(
-    Object.keys(modules).reduce((acc, moduleName, idx) => ({ ...acc, [moduleName]: idx === 0 }), {})
+  const [expandedModules, setExpandedModules] = useState<Record<number, boolean>>(
+    modules.reduce((acc, module, idx) => ({ ...acc, [module.id]: idx === 0 }), {})
   );
 
-  const toggleModule = (moduleName: string) => {
-    setExpandedModules(prev => ({ ...prev, [moduleName]: !prev[moduleName] }));
+  const toggleModule = (moduleId: number) => {
+    setExpandedModules(prev => ({ ...prev, [moduleId]: !prev[moduleId] }));
   };
 
   const handleSelectLesson = (lesson: any) => {
@@ -48,20 +47,20 @@ export default function CourseViewer({ course, lessons }: { course: any, lessons
         </div>
         
         <div className="overflow-y-auto flex-1 pb-20 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-track]:bg-transparent">
-          {Object.keys(modules).length > 0 ? (
-            Object.keys(modules).map((moduleName, mIdx) => (
-              <div key={mIdx} className="border-b border-gray-100 dark:border-gray-800">
+          {modules.length > 0 ? (
+            modules.map((moduleItem, mIdx) => (
+              <div key={moduleItem.id} className="border-b border-gray-100 dark:border-gray-800">
                 <button 
-                  onClick={() => toggleModule(moduleName)}
+                  onClick={() => toggleModule(moduleItem.id)}
                   className="w-full flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-800/30 hover:bg-gray-100 dark:hover:bg-gray-800/80 transition-colors text-left"
                 >
-                  <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">{moduleName}</span>
-                  {expandedModules[moduleName] ? <ChevronDown className="w-4 h-4 text-gray-500" /> : <ChevronRight className="w-4 h-4 text-gray-500" />}
+                  <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">{moduleItem.title}</span>
+                  {expandedModules[moduleItem.id] ? <ChevronDown className="w-4 h-4 text-gray-500 shrink-0" /> : <ChevronRight className="w-4 h-4 text-gray-500 shrink-0" />}
                 </button>
                 
-                {expandedModules[moduleName] && (
+                {expandedModules[moduleItem.id] && (
                   <div className="bg-white dark:bg-gray-900">
-                    {modules[moduleName].map((lesson: any, lIdx: number) => {
+                    {lessonsByModule[moduleItem.id] ? lessonsByModule[moduleItem.id].map((lesson: any, lIdx: number) => {
                       const isActive = activeLesson?.id === lesson.id;
                       return (
                         <button
@@ -76,18 +75,19 @@ export default function CourseViewer({ course, lessons }: { course: any, lessons
                             <p className={`text-sm ${isActive ? 'font-semibold text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'}`}>
                               {lIdx + 1}. {lesson.title}
                             </p>
-                            {lesson.duration && <p className="text-xs text-gray-400 mt-1">{lesson.duration}</p>}
                           </div>
                         </button>
                       );
-                    })}
+                    }) : (
+                      <div className="p-4 text-sm text-gray-500 pl-11">No lessons in this module.</div>
+                    )}
                   </div>
                 )}
               </div>
             ))
           ) : (
             <div className="p-8 text-center text-gray-500 text-sm">
-              No lessons available for this course yet.
+              No modules available for this course yet.
             </div>
           )}
         </div>
@@ -112,8 +112,9 @@ export default function CourseViewer({ course, lessons }: { course: any, lessons
                 {activeLesson.title}
               </h1>
               <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <span className="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full font-medium">{activeLesson.module_title}</span>
-                {activeLesson.duration && <span>• {activeLesson.duration}</span>}
+                <span className="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full font-medium truncate max-w-sm">
+                  {modules.find(m => m.id === activeLesson.module_id)?.title || 'Module'}
+                </span>
               </div>
             </div>
 
@@ -126,6 +127,13 @@ export default function CourseViewer({ course, lessons }: { course: any, lessons
                   className="w-full h-full object-contain"
                   controlsList="nodownload"
                 />
+              </div>
+            )}
+
+            {/* Content Text */}
+            {activeLesson.content_text && (
+              <div className="prose dark:prose-invert max-w-none bg-white dark:bg-gray-900 p-6 rounded-2xl border border-gray-200 dark:border-gray-800">
+                <p className="whitespace-pre-wrap">{activeLesson.content_text}</p>
               </div>
             )}
 

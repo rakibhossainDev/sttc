@@ -23,17 +23,33 @@ export default async function CoursePage({ params }: { params: { id: string } })
     notFound();
   }
 
-  // Fetch all lessons for this course
-  const { data: lessons } = await supabase
-    .from('lessons')
+  // Fetch all modules for this course
+  const { data: modules } = await supabase
+    .from('modules')
     .select('*')
     .eq('course_id', courseId)
-    .order('lesson_order', { ascending: true })
+    .order('order_index', { ascending: true })
     .order('id', { ascending: true });
+
+  // Fetch all lessons for these modules
+  let lessons: any[] = [];
+  if (modules && modules.length > 0) {
+    const moduleIds = modules.map(m => m.id);
+    const { data: lessonsData } = await supabase
+      .from('lessons_new')
+      .select('*')
+      .in('module_id', moduleIds)
+      .order('order_index', { ascending: true })
+      .order('id', { ascending: true });
+    
+    if (lessonsData) {
+      lessons = lessonsData;
+    }
+  }
 
   return (
     <main className="w-full">
-      <CourseViewer course={course} lessons={lessons || []} />
+      <CourseViewer course={course} modules={modules || []} lessons={lessons} />
     </main>
   );
 }
