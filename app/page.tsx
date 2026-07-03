@@ -1,6 +1,7 @@
 import { PlayCircle, FileText, Folder, BookOpen, MonitorPlay, Award, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import HeroSlider from "@/components/HeroSlider";
 
 export default async function Home() {
   const supabase = await createClient();
@@ -17,30 +18,11 @@ export default async function Home() {
 
   return (
     <div className="flex-1 w-full overflow-y-auto bg-gray-50/50 pb-20">
-      
       {/* Hero Section */}
-      <section className="w-full bg-gradient-to-br from-blue-600 to-blue-800 text-white py-12 md:py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden mb-6 md:mb-10">
-        {/* Subtle background decoration */}
-        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 rounded-full bg-white opacity-5 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 h-80 rounded-full bg-blue-400 opacity-20 blur-3xl"></div>
-        
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between">
-          <div className="max-w-2xl">
-            <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight mb-4">
-              Welcome back to your learning journey
-            </h1>
-            <p className="text-blue-100 text-lg md:text-xl font-medium mb-8 max-w-lg leading-relaxed">
-              Continue where you left off or discover new courses to enhance your skills today.
-            </p>
-            <div className="flex gap-4">
-              <Link href="#courses" className="bg-white text-blue-700 hover:bg-blue-50 font-bold py-3.5 px-6 rounded-full transition-colors shadow-lg flex items-center">
-                Explore Courses
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Link>
-            </div>
-          </div>
-        </div>
+      <section className="w-full mb-6 md:mb-10 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto">
+        <HeroSlider />
       </section>
+
 
       {/* Main Content Wrapper */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 space-y-12">
