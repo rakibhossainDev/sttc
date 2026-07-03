@@ -2,12 +2,14 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Trash2, Plus, Loader2 } from "lucide-react";
+import { Trash2, Plus, Loader2, BookOpen } from "lucide-react";
+import CurriculumManager from "./CurriculumManager";
 
 export default function CourseManager({ initialCourses, categories, adminName }: { initialCourses: any[], categories: any[], adminName: string }) {
   const [courses, setCourses] = useState(initialCourses);
   const [isLoading, setIsLoading] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<any | null>(null);
   const supabase = createClient();
 
   // Form State
@@ -97,6 +99,10 @@ export default function CourseManager({ initialCourses, categories, adminName }:
     }
   };
 
+  if (selectedCourse) {
+    return <CurriculumManager courseId={selectedCourse.id} courseTitle={selectedCourse.title} onBack={() => setSelectedCourse(null)} />;
+  }
+
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800 p-6">
       <div className="flex items-center justify-between mb-6">
@@ -175,13 +181,21 @@ export default function CourseManager({ initialCourses, categories, adminName }:
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => handleDelete(course.id)}
-              className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors self-end sm:self-auto flex-shrink-0"
-              title="Delete course"
-            >
-              <Trash2 className="w-4 h-4" />
-            </button>
+            <div className="flex flex-col sm:flex-row gap-2 mt-4 sm:mt-0 sm:self-auto flex-shrink-0 w-full sm:w-auto">
+              <button
+                onClick={() => setSelectedCourse(course)}
+                className="text-blue-600 hover:text-blue-700 px-3 py-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/30 transition-colors flex items-center justify-center gap-2 text-sm font-semibold border border-blue-100 dark:border-blue-800 bg-white dark:bg-gray-800"
+              >
+                <BookOpen className="w-4 h-4" /> Manage Curriculum
+              </button>
+              <button
+                onClick={() => handleDelete(course.id)}
+                className="text-red-500 hover:text-red-700 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/30 transition-colors flex justify-center items-center border border-transparent"
+                title="Delete course"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         ))}
         {courses.length === 0 && (
