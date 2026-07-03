@@ -6,7 +6,15 @@ import HomeCourseList from "@/components/HomeCourseList";
 
 export default async function Home() {
   const supabase = await createClient();
-  const { data: popularCourses } = await supabase.from('courses').select('*').order('id', { ascending: true });
+  const [
+    { data: popularCourses },
+    { data: dbCategories },
+    { data: dbSlides }
+  ] = await Promise.all([
+    supabase.from('courses').select('*').order('id', { ascending: true }),
+    supabase.from('categories').select('*').order('id', { ascending: true }),
+    supabase.from('hero_slides').select('*').eq('is_active', true).order('id', { ascending: true })
+  ]);
 
   const popularResources = [
     { id: 1, title: "Class 1 Notes", type: "pdf", icon: <FileText className="w-8 h-8 text-blue-500 mb-2" /> },
@@ -15,13 +23,14 @@ export default async function Home() {
     { id: 4, title: "Cheat Sheet", type: "pdf", icon: <FileText className="w-8 h-8 text-blue-500 mb-2" /> },
   ];
 
-  const categories = ["All", "Web Development", "Cyber Security", "Graphic Design", "Digital Marketing", "App Development"];
+  const categories = ["All", ...(dbCategories?.filter(c => c.name !== 'All').map(c => c.name) || [])];
+  const slides = dbSlides?.map(s => s.image_url) || [];
 
   return (
     <div className="flex-1 w-full overflow-y-auto bg-gray-50/50 pb-20">
       {/* Hero Section */}
       <section className="w-full mb-4 md:mb-8 px-4 md:px-6 pt-4 md:pt-6 pb-2 md:pb-4 max-w-7xl mx-auto">
-        <HeroSlider />
+        <HeroSlider slides={slides} />
       </section>
 
 
