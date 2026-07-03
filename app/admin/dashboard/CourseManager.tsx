@@ -38,7 +38,9 @@ export default function CourseManager({ initialCourses, categories, adminName }:
         });
 
         if (!uploadRes.ok) {
-          throw new Error("Failed to upload image to Cloudinary.");
+          const errorResponse = await uploadRes.json();
+          console.error("Cloudinary Error Details:", errorResponse);
+          throw new Error(errorResponse.error?.message || "Failed to upload image to Cloudinary.");
         }
         
         const uploadData = await uploadRes.json();
