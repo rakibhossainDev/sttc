@@ -14,7 +14,7 @@ const sliderImages = [
 
 export default function HeroSlider() {
   return (
-    <div className="w-full h-[220px] md:h-[400px] overflow-hidden">
+    <div className="w-full h-[220px] md:h-[400px] rounded-xl md:rounded-2xl overflow-hidden shadow-sm">
       <Swiper
         modules={[Autoplay, Pagination]}
         pagination={{ clickable: true, dynamicBullets: true }}
@@ -22,7 +22,7 @@ export default function HeroSlider() {
         loop={true}
         spaceBetween={0}
         slidesPerView={1}
-        className="w-full h-full rounded-none md:rounded-xl shadow-sm"
+        className="w-full h-full"
       >
         {sliderImages.map((src, index) => (
           <SwiperSlide key={index}>
