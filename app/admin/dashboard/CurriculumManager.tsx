@@ -126,24 +126,29 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
       sort_order: nextOrder
     };
 
-    const { data, error } = await supabase
-      .from('lessons_new')
-      .insert([newLesson])
-      .select()
-      .single();
+    try {
+      const { data, error } = await supabase
+        .from('lessons_new')
+        .insert([newLesson])
+        .select()
+        .single();
 
-    if (error) {
-      alert("Error adding lesson: " + error.message);
-    } else if (data) {
-      setLessons([...lessons, data]);
-      setLessonTitle("");
-      setContentText("");
-      setVideoUrl("");
-      setPdfFile(null);
-      setSupportFile(null);
-      setShowLessonForm(false);
+      if (error) {
+        throw new Error(error.message);
+      } else if (data) {
+        setLessons([...lessons, data]);
+        setLessonTitle("");
+        setContentText("");
+        setVideoUrl("");
+        setPdfFile(null);
+        setSupportFile(null);
+        setShowLessonForm(false);
+      }
+    } catch (err: any) {
+      alert("Error adding lesson: " + err.message);
+    } finally {
+      setIsSaving(false);
     }
-    setIsSaving(false);
   };
 
   const handleDeleteModule = async (id: number) => {
