@@ -7,7 +7,7 @@ export const revalidate = 0;
 export default async function CoursePage({ params }: { params: Promise<{ id: string }> }) {
   const supabase = await createClient();
   const { id } = await params;
-  const courseId = parseInt(id);
+  const courseId = parseInt(id, 10);
 
   if (isNaN(courseId)) {
     notFound();
@@ -25,23 +25,31 @@ export default async function CoursePage({ params }: { params: Promise<{ id: str
   }
 
   // Fetch all modules for this course
-  const { data: modules } = await supabase
+  const { data: modules, error: modulesError } = await supabase
     .from('modules')
     .select('*')
     .eq('course_id', courseId)
-    .order('order_index', { ascending: true })
+    .order('sort_order', { ascending: true })
     .order('id', { ascending: true });
+
+  if (modulesError) {
+    console.error("Supabase Error fetching modules:", modulesError);
+  }
 
   // Fetch all lessons for these modules
   let lessons: any[] = [];
   if (modules && modules.length > 0) {
     const moduleIds = modules.map(m => m.id);
-    const { data: lessonsData } = await supabase
+    const { data: lessonsData, error: lessonsError } = await supabase
       .from('lessons_new')
       .select('*')
       .in('module_id', moduleIds)
-      .order('order_index', { ascending: true })
+      .order('sort_order', { ascending: true })
       .order('id', { ascending: true });
+    
+    if (lessonsError) {
+      console.error("Supabase Error fetching lessons:", lessonsError);
+    }
     
     if (lessonsData) {
       lessons = lessonsData;

@@ -36,7 +36,7 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
       .from('modules')
       .select('*')
       .eq('course_id', courseId)
-      .order('order_index', { ascending: true })
+      .order('sort_order', { ascending: true })
       .order('id', { ascending: true });
       
     if (modsErr) alert("Error fetching modules: " + modsErr.message);
@@ -49,7 +49,7 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
         .from('lessons_new')
         .select('*')
         .in('module_id', moduleIds)
-        .order('order_index', { ascending: true })
+        .order('sort_order', { ascending: true })
         .order('id', { ascending: true });
         
       if (lessErr) alert("Error fetching lessons: " + lessErr.message);
@@ -67,7 +67,7 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
     
     const { data, error } = await supabase
       .from('modules')
-      .insert([{ course_id: courseId, title: newModuleTitle.trim(), order_index: nextOrder }])
+      .insert([{ course_id: courseId, title: newModuleTitle.trim(), sort_order: nextOrder }])
       .select()
       .single();
 
@@ -95,7 +95,7 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
       video_url: videoUrl.trim() || null,
       pdf_url: pdfUrl.trim() || null,
       support_file_url: supportFileUrl.trim() || null,
-      order_index: nextOrder
+      sort_order: nextOrder
     };
 
     const { data, error } = await supabase
