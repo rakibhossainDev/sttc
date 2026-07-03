@@ -4,9 +4,10 @@ import CourseViewer from "./CourseViewer";
 
 export const revalidate = 0;
 
-export default async function CoursePage({ params }: { params: { id: string } }) {
+export default async function CoursePage({ params }: { params: Promise<{ id: string }> }) {
   const supabase = await createClient();
-  const courseId = parseInt(params.id);
+  const { id } = await params;
+  const courseId = parseInt(id);
 
   if (isNaN(courseId)) {
     notFound();
