@@ -93,7 +93,7 @@ export default function AdminLogin() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg py-2.5 sm:py-3 border outline-none transition-colors"
+                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 sm:text-sm border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 rounded-lg py-2.5 sm:py-3 border outline-none transition-colors"
                   placeholder="admin@sttc.edu"
                 />
               </div>
@@ -112,7 +112,7 @@ export default function AdminLogin() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-12 sm:text-sm border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white rounded-lg py-2.5 sm:py-3 border outline-none transition-colors"
+                  className="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-12 sm:text-sm border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-white placeholder:text-gray-500 dark:placeholder:text-gray-400 rounded-lg py-2.5 sm:py-3 border outline-none transition-colors"
                   placeholder="••••••••"
                 />
                 <button
