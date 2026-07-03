@@ -7,6 +7,10 @@ import { usePathname } from 'next/navigation';
 export default function BottomNav() {
   const pathname = usePathname();
 
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
   const navItems = [
     { name: 'Home', href: '/', icon: Home },
     { name: 'Courses', href: '/courses', icon: PlayCircle }, // using /courses as a generic link

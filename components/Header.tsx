@@ -1,11 +1,20 @@
 "use client";
 
 import { useState } from 'react';
-import { Menu, X, Home, BookOpen, LayoutDashboard, Settings, HelpCircle, UserCircle } from 'lucide-react';
+import { Menu, X, Home, BookOpen, LayoutDashboard, Settings, HelpCircle, UserCircle, Bell, Sun, Moon } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useTheme } from 'next-themes';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const { theme, setTheme } = useTheme();
+  const pathname = usePathname();
+
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
 
   const navLinks = [
     { name: 'Home', href: '/', icon: Home },
@@ -17,17 +26,60 @@ export default function Header() {
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 bg-white border-b border-gray-100 shadow-sm z-40 h-16 flex items-center px-4 justify-between">
+      <header className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-900 border-b border-gray-100 dark:border-gray-800 shadow-sm z-40 h-16 flex items-center px-4 justify-between transition-colors">
         <button 
           onClick={() => setIsOpen(true)}
           className="p-2 -ml-2 text-gray-600 hover:bg-gray-50 hover:text-blue-600 rounded-full transition-colors z-10"
         >
           <Menu className="w-6 h-6" />
         </button>
-        <h1 className="text-lg font-bold text-gray-900 absolute left-0 right-0 text-center pointer-events-none">
+        <h1 className="text-lg font-bold text-gray-900 dark:text-white absolute left-0 right-0 text-center pointer-events-none">
           Shariatpur TTC
         </h1>
-        <div className="w-10"></div>
+        
+        <div className="flex items-center gap-2 relative z-10">
+          <button
+            onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-400 rounded-full transition-colors"
+          >
+            <Sun className="w-5 h-5 hidden dark:block" />
+            <Moon className="w-5 h-5 block dark:hidden" />
+          </button>
+          
+          <div className="relative">
+            <button 
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-400 rounded-full transition-colors relative"
+            >
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+            </button>
+            
+            {showNotifications && (
+              <>
+                <div 
+                  className="fixed inset-0 z-40" 
+                  onClick={() => setShowNotifications(false)}
+                />
+                <div className="absolute right-0 mt-2 w-72 bg-white dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl shadow-xl z-50 overflow-hidden">
+                  <div className="p-3 font-bold border-b border-gray-100 dark:border-gray-800 dark:text-white">
+                    Notifications
+                  </div>
+                  <div className="max-h-64 overflow-y-auto">
+                    <div className="p-3 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer">
+                      <p className="text-sm font-semibold dark:text-white">New course added</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Web Development basics is now available.</p>
+                    </div>
+                    <div className="p-3 border-b border-gray-50 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 cursor-pointer">
+                      <p className="text-sm font-semibold dark:text-white">Welcome to Shariatpur TTC!</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">Start your learning journey today.</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+        </div>
       </header>
 
       {/* Sidebar Overlay */}
