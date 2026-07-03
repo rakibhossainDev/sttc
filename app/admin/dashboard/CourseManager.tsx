@@ -14,7 +14,7 @@ export default function CourseManager({ initialCourses, categories, adminName }:
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [duration, setDuration] = useState("");
   const [modulesCount, setModulesCount] = useState("");
 
@@ -22,15 +22,38 @@ export default function CourseManager({ initialCourses, categories, adminName }:
     e.preventDefault();
     setIsLoading(true);
 
-    const newCourse = {
-      title,
-      description,
-      category_id: categoryId ? parseInt(categoryId) : null,
-      image_url: imageUrl,
-      duration,
-      modules_count: parseInt(modulesCount) || 0,
-      instructor_name: adminName // Defaulting to the logged in admin
-    };
+    try {
+      let uploadedImageUrl = "";
+
+      // Upload to Cloudinary if a file is selected
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("file", imageFile);
+        formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string);
+        
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        const uploadRes = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error("Failed to upload image to Cloudinary.");
+        }
+        
+        const uploadData = await uploadRes.json();
+        uploadedImageUrl = uploadData.secure_url;
+      }
+
+      const newCourse = {
+        title,
+        description,
+        category_id: categoryId ? parseInt(categoryId) : null,
+        image_url: uploadedImageUrl,
+        duration,
+        modules_count: parseInt(modulesCount) || 0,
+        instructor_name: adminName // Defaulting to the logged in admin
+      };
 
     const { data, error } = await supabase
       .from('courses')
@@ -38,20 +61,24 @@ export default function CourseManager({ initialCourses, categories, adminName }:
       .select()
       .single();
 
-    if (error) {
-      alert("Error adding course: " + error.message);
-    } else if (data) {
-      setCourses([data, ...courses]);
-      setShowForm(false);
-      // Reset form
-      setTitle("");
-      setDescription("");
-      setCategoryId("");
-      setImageUrl("");
-      setDuration("");
-      setModulesCount("");
+      if (error) {
+        throw new Error(error.message);
+      } else if (data) {
+        setCourses([data, ...courses]);
+        setShowForm(false);
+        // Reset form
+        setTitle("");
+        setDescription("");
+        setCategoryId("");
+        setImageFile(null);
+        setDuration("");
+        setModulesCount("");
+      }
+    } catch (err: any) {
+      alert(err.message || "An unexpected error occurred during upload.");
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   const handleDelete = async (id: number) => {
@@ -103,8 +130,13 @@ export default function CourseManager({ initialCourses, categories, adminName }:
               <textarea value={description} onChange={e => setDescription(e.target.value)} className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm dark:text-white" rows={2} />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Thumbnail Image URL</label>
-              <input type="url" value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://..." className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm dark:text-white" />
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Course Thumbnail</label>
+              <input 
+                type="file" 
+                accept="image/*" 
+                onChange={e => setImageFile(e.target.files?.[0] || null)} 
+                className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm dark:text-white file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors" 
+              />
             </div>
             <div>
               <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Duration (e.g. '3 Months')</label>
@@ -116,7 +148,12 @@ export default function CourseManager({ initialCourses, categories, adminName }:
             </div>
           </div>
           <button type="submit" disabled={isLoading} className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-sm font-medium transition-colors flex justify-center items-center">
-            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Save Course"}
+            {isLoading ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin mr-2" /> 
+                Processing Upload...
+              </>
+            ) : "Save Course"}
           </button>
         </form>
       )}
