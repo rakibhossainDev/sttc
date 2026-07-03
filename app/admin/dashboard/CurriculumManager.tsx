@@ -21,8 +21,8 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
   const [lessonTitle, setLessonTitle] = useState("");
   const [contentText, setContentText] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
-  const [pdfUrl, setPdfUrl] = useState("");
-  const [supportFileUrl, setSupportFileUrl] = useState("");
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [supportFile, setSupportFile] = useState<File | null>(null);
 
   useEffect(() => {
     fetchCurriculum();
@@ -86,6 +86,34 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
     if (!selectedModuleId) return alert("Please select a module");
     setIsSaving(true);
 
+    let finalPdfUrl = null;
+    let finalSupportFileUrl = null;
+
+    try {
+      if (pdfFile) {
+        const fd = new FormData();
+        fd.append("file", pdfFile);
+        fd.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string);
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: "POST", body: fd });
+        if (!res.ok) throw new Error("Failed to upload PDF to Cloudinary");
+        const data = await res.json();
+        finalPdfUrl = data.secure_url;
+      }
+      if (supportFile) {
+        const fd = new FormData();
+        fd.append("file", supportFile);
+        fd.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string);
+        const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: "POST", body: fd });
+        if (!res.ok) throw new Error("Failed to upload Support File to Cloudinary");
+        const data = await res.json();
+        finalSupportFileUrl = data.secure_url;
+      }
+    } catch (err: any) {
+      alert(err.message);
+      setIsSaving(false);
+      return;
+    }
+
     const nextOrder = lessons.filter(l => l.module_id === parseInt(selectedModuleId)).length + 1;
 
     const newLesson = {
@@ -93,8 +121,8 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
       title: lessonTitle.trim(),
       content_text: contentText.trim() || null,
       video_url: videoUrl.trim() || null,
-      pdf_url: pdfUrl.trim() || null,
-      support_file_url: supportFileUrl.trim() || null,
+      pdf_url: finalPdfUrl,
+      support_file_url: finalSupportFileUrl,
       sort_order: nextOrder
     };
 
@@ -111,8 +139,8 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
       setLessonTitle("");
       setContentText("");
       setVideoUrl("");
-      setPdfUrl("");
-      setSupportFileUrl("");
+      setPdfFile(null);
+      setSupportFile(null);
       setShowLessonForm(false);
     }
     setIsSaving(false);
@@ -200,17 +228,25 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
               <input type="url" placeholder="https://..." value={videoUrl} onChange={e => setVideoUrl(e.target.value)} className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm dark:text-white" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">PDF URL (optional)</label>
-              <input type="url" placeholder="https://..." value={pdfUrl} onChange={e => setPdfUrl(e.target.value)} className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm dark:text-white" />
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">PDF Notes File (optional)</label>
+              <input type="file" accept=".pdf" onChange={e => setPdfFile(e.target.files?.[0] || null)} className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm dark:text-white file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors" />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Support File URL (optional)</label>
-              <input type="url" placeholder="https://..." value={supportFileUrl} onChange={e => setSupportFileUrl(e.target.value)} className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm dark:text-white" />
+              <label className="block text-xs font-semibold text-gray-600 dark:text-gray-400 mb-1">Support File (optional)</label>
+              <input type="file" onChange={e => setSupportFile(e.target.files?.[0] || null)} className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-sm dark:text-white file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition-colors" />
             </div>
           </div>
           <button type="submit" disabled={isSaving} className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg text-sm font-medium transition-colors flex justify-center items-center">
-            {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Plus className="w-4 h-4 mr-2" />}
-            Save Lesson
+            {isSaving ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin mr-2" /> 
+                Processing Upload...
+              </>
+            ) : (
+              <>
+                <Plus className="w-4 h-4 mr-2" /> Save Lesson
+              </>
+            )}
           </button>
         </form>
       )}

@@ -106,42 +106,45 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
               </div>
             )}
 
-            {/* Action Files */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
-              {activeLesson.pdf_url && (
-                <a 
-                  href={activeLesson.pdf_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl hover:border-red-300 dark:hover:border-red-800/50 hover:shadow-sm transition-all group"
-                >
-                  <div className="w-12 h-12 rounded-lg bg-red-50 dark:bg-red-900/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <FileText className="w-6 h-6 text-red-500" />
+            {/* In-App PDF Viewer */}
+            {activeLesson.pdf_url && (
+              <div className="w-full h-[500px] md:h-[700px] bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col">
+                <div className="p-3 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-red-500" />
+                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Lesson PDF Document</span>
+                </div>
+                <iframe 
+                  src={activeLesson.pdf_url} 
+                  title="PDF Document Viewer"
+                  className="w-full flex-1 border-0"
+                />
+              </div>
+            )}
+
+            {/* Support File Details Block */}
+            {activeLesson.support_file_url && (
+              <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 p-5 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center shrink-0">
+                    <Download className="w-6 h-6 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white text-sm">View PDF Notes</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">Read supplementary material</p>
+                    <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg">Support Material Available</h3>
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 max-w-xl">
+                      This lesson includes a downloadable support file (such as a ZIP archive, document, or spreadsheet) to help you follow along with the exercises.
+                    </p>
                   </div>
-                </a>
-              )}
-
-              {activeLesson.support_file_url && (
+                </div>
                 <a 
                   href={activeLesson.support_file_url} 
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="flex items-center gap-4 p-4 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl hover:border-blue-300 dark:hover:border-blue-800/50 hover:shadow-sm transition-all group"
+                  className="bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors shrink-0 flex items-center justify-center gap-2"
                 >
-                  <div className="w-12 h-12 rounded-lg bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                    <Download className="w-6 h-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white text-sm">Download Support File</h3>
-                    <p className="text-xs text-gray-500 mt-0.5">Source code & assets</p>
-                  </div>
+                  <Download className="w-4 h-4" /> Download File
                 </a>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center h-full">
