@@ -61,7 +61,7 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-950 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex flex-col pt-16 sm:pt-24 items-center bg-gray-50 dark:bg-gray-950 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md mx-auto">
         <div className="mb-8 text-center">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
@@ -134,11 +134,6 @@ export default function AdminLogin() {
               >
                 {isLoading ? "Signing in..." : "Sign in to Dashboard"}
               </button>
-            </div>
-            
-            <div className="text-center mt-6 text-xs text-gray-500 dark:text-gray-400 flex flex-col gap-1">
-              <p className="font-semibold">Demo Credentials:</p>
-              <p>Email: admin@sttc.edu | Pass: admin123</p>
             </div>
           </form>
         </div>
