@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Lock, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -11,21 +12,47 @@ export default function AdminLogin() {
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const supabase = createClient();
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
 
-    // Mock Authentication
-    setTimeout(() => {
-      if (email === "admin@sttc.edu" && password === "admin123") {
-        // Mock successful auth - redirect to dashboard
-        router.push("/admin/dashboard");
-      } else {
-        setError("Invalid admin credentials");
+    try {
+      const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (authError) {
+        setError(authError.message);
         setIsLoading(false);
+        return;
       }
-    }, 1000);
+
+      if (authData.user) {
+        // Check role in profiles table
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', authData.user.id)
+          .single();
+
+        if (profileError || !profile || profile.role !== 'admin') {
+          await supabase.auth.signOut();
+          setError("Access denied. Admin privileges required.");
+          setIsLoading(false);
+          return;
+        }
+
+        // Redirect to dashboard on success
+        router.push("/admin/dashboard");
+      }
+    } catch (err: any) {
+      setError(err.message || "An unexpected error occurred");
+      setIsLoading(false);
+    }
   };
 
   return (
