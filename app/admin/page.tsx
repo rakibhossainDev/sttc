@@ -37,16 +37,26 @@ export default function AdminLogin() {
       }
 
       if (authData.user) {
-        // Check role in profiles table
+        // Forcefully fetch the latest single row from public.profiles
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('role')
           .eq('id', authData.user.id)
           .single();
 
-        if (profileError || !profile || profile.role !== 'admin') {
+        if (profileError) {
+          console.error("Admin Login - Profile Fetch Error:", profileError);
           await supabase.auth.signOut();
-          setError("Access denied. Admin privileges required.");
+          setError(`Access denied. Error verifying profile: ${profileError.message}`);
+          setIsLoading(false);
+          return;
+        }
+
+        // Strictly check if the fetched role is exactly 'admin'
+        if (!profile || profile.role !== 'admin') {
+          console.error("Admin Login - Role Mismatch:", profile?.role);
+          await supabase.auth.signOut();
+          setError(`Access denied. Your role is '${profile?.role || 'null'}', but 'admin' is required.`);
           setIsLoading(false);
           return;
         }
