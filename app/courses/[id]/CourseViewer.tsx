@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PlayCircle, FileText, Download, ChevronDown, Info } from "lucide-react";
+import { PlayCircle, FileText, Download, ChevronDown, Info, ArrowLeft } from "lucide-react";
 
 export default function CourseViewer({ course, modules, lessons }: { course: any, modules: any[], lessons: any[] }) {
   const [activeLesson, setActiveLesson] = useState<any | null>(lessons.length > 0 ? lessons[0] : null);
@@ -40,20 +40,70 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
   };
 
   const activeVideoEmbed = activeLesson?.video_url ? getYoutubeEmbedUrl(activeLesson.video_url) : null;
+  const hasPdf = !!activeLesson?.pdf_url;
 
   return (
-    <div className="flex flex-col md:flex-row-reverse min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-slate-950">
+    <div className="flex flex-col md:flex-row-reverse min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-slate-950 relative">
       
       {/* Main Content Area (Right on Desktop, Top on Mobile) */}
       <div className="flex-1 flex flex-col w-full h-full md:overflow-y-auto pb-10 md:pb-0">
-        
-        {/* Mobile Header Title (Optional, hidden to give more space for video) */}
-        {/* <div className="md:hidden bg-white dark:bg-slate-900 p-4 border-b border-slate-200 dark:border-slate-800 flex items-center shadow-sm">
-          <h1 className="font-bold text-slate-900 dark:text-white truncate flex-1">{course.title}</h1>
-        </div> */}
 
         {activeLesson ? (
-          <div className="w-full max-w-5xl mx-auto p-0 md:p-8 md:space-y-6">
+          hasPdf ? (
+            // ==========================================
+            // PDF Full-Screen Reading Mode
+            // ==========================================
+            <div className="fixed inset-0 z-[60] bg-slate-50 dark:bg-slate-950 flex flex-col md:relative md:inset-auto md:z-auto md:h-full md:flex-1 md:bg-transparent">
+              {/* Toolbar */}
+              <div className="p-3 md:p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shadow-sm shrink-0">
+                <button 
+                  onClick={() => setActiveLesson(null)}
+                  className="flex items-center gap-1.5 md:gap-2 text-slate-700 dark:text-slate-300 font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base shrink-0"
+                >
+                  <ArrowLeft className="w-4 h-4 md:w-5 md:h-5" />
+                  <span>Back</span>
+                  <span className="hidden md:inline"> to Syllabus</span>
+                </button>
+                
+                <div className="flex flex-1 items-center justify-center gap-2 px-2 md:px-4 truncate">
+                  <FileText className="w-4 h-4 md:w-5 md:h-5 text-blue-600 dark:text-blue-400 shrink-0" />
+                  <span className="text-sm md:text-base font-bold tracking-tight text-slate-800 dark:text-slate-200 truncate">
+                    Interactive CBLM Reader: {activeLesson.title}
+                  </span>
+                </div>
+                
+                {/* Spacer to balance the flex layout */}
+                <div className="w-[70px] md:w-[150px] shrink-0 opacity-0 pointer-events-none"></div>
+              </div>
+              
+              {/* Document Container */}
+              <div className="w-full flex-1 bg-slate-100 dark:bg-slate-900 flex flex-col h-[calc(100vh-64px)] md:h-auto">
+                <iframe 
+                  src={activeLesson.pdf_url} 
+                  title="PDF Document Viewer"
+                  className="w-full flex-1 border-0"
+                />
+                
+                {/* Support File Details inside PDF Mode */}
+                {activeLesson.support_file_url && (
+                  <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 shrink-0 flex justify-center">
+                    <a 
+                      href={activeLesson.support_file_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors flex items-center justify-center gap-2 shadow-sm"
+                    >
+                      <Download className="w-4 h-4" /> Download Support File
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : (
+            // ==========================================
+            // Standard Video & Text Mode
+            // ==========================================
+            <div className="w-full max-w-5xl mx-auto p-0 md:p-8 md:space-y-6">
             
             {/* Desktop Header */}
             <div className="hidden md:block space-y-2 mb-2">
@@ -108,24 +158,7 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
               </div>
             )}
 
-            {/* In-App PDF Viewer */}
-            {activeLesson.pdf_url && (
-              <div className="px-4 md:px-0 mb-6 md:mb-0 mt-4 md:mt-0">
-                <div className="w-full h-[500px] md:h-[700px] bg-white dark:bg-slate-900 rounded-lg overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
-                  <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                      <span className="text-base font-bold tracking-tight text-slate-800 dark:text-slate-200">Interactive CBLM Reader</span>
-                    </div>
-                  </div>
-                  <iframe 
-                    src={activeLesson.pdf_url} 
-                    title="PDF Document Viewer"
-                    className="w-full flex-1 border-0"
-                  />
-                </div>
-              </div>
-            )}
+
 
             {/* Support File Details Block */}
             {activeLesson.support_file_url && (
@@ -154,6 +187,7 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
               </div>
             )}
           </div>
+          )
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center h-full">
             <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
