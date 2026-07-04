@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PlayCircle, FileText, Download, ChevronRight, ChevronDown } from "lucide-react";
+import { PlayCircle, FileText, Download, ChevronDown, Info } from "lucide-react";
 
 export default function CourseViewer({ course, modules, lessons }: { course: any, modules: any[], lessons: any[] }) {
   const [activeLesson, setActiveLesson] = useState<any | null>(lessons.length > 0 ? lessons[0] : null);
@@ -42,34 +42,34 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
   const activeVideoEmbed = activeLesson?.video_url ? getYoutubeEmbedUrl(activeLesson.video_url) : null;
 
   return (
-    <div className="flex flex-col md:flex-row-reverse min-h-[calc(100vh-64px)] bg-gray-50 dark:bg-gray-950">
+    <div className="flex flex-col md:flex-row-reverse min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-slate-950">
       
       {/* Main Content Area (Right on Desktop, Top on Mobile) */}
       <div className="flex-1 flex flex-col w-full h-full md:overflow-y-auto pb-10 md:pb-0">
         
-        {/* Mobile Header Title */}
-        <div className="md:hidden bg-white dark:bg-gray-900 p-4 border-b border-gray-200 dark:border-gray-800 flex items-center shadow-sm">
-          <h1 className="font-bold text-gray-900 dark:text-white truncate flex-1">{course.title}</h1>
-        </div>
+        {/* Mobile Header Title (Optional, hidden to give more space for video) */}
+        {/* <div className="md:hidden bg-white dark:bg-slate-900 p-4 border-b border-slate-200 dark:border-slate-800 flex items-center shadow-sm">
+          <h1 className="font-bold text-slate-900 dark:text-white truncate flex-1">{course.title}</h1>
+        </div> */}
 
         {activeLesson ? (
-          <div className="w-full max-w-5xl mx-auto p-4 md:p-8 space-y-6">
+          <div className="w-full max-w-5xl mx-auto p-0 md:p-8 md:space-y-6">
             
             {/* Desktop Header */}
             <div className="hidden md:block space-y-2 mb-2">
-              <h1 className="text-2xl md:text-3xl font-extrabold text-gray-900 dark:text-white leading-tight">
+              <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight text-slate-800 dark:text-white leading-tight">
                 {activeLesson.title}
               </h1>
-              <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
-                <span className="bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full font-medium truncate max-w-sm">
+              <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                <span className="bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full font-medium truncate max-w-sm">
                   {modules.find(m => m.id === activeLesson.module_id)?.title || 'Module'}
                 </span>
               </div>
             </div>
 
-            {/* Video Player Area */}
+            {/* Video Player Area - No border/radius on mobile for full bleed */}
             {activeLesson.video_url && (
-              <div className="w-full aspect-video bg-black rounded-xl md:rounded-2xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-800">
+              <div className="w-full aspect-video bg-black md:rounded-2xl overflow-hidden md:shadow-lg md:border border-slate-200 dark:border-slate-800 relative z-10">
                 {activeVideoEmbed ? (
                   <iframe 
                     src={activeVideoEmbed} 
@@ -90,69 +90,77 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
             )}
 
             {/* Mobile Inline Title (Shown below video on mobile) */}
-            <div className="md:hidden space-y-2 mt-4">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white leading-tight">
+            <div className="md:hidden space-y-2 p-4 pt-5 pb-2">
+              <h2 className="text-xl font-bold tracking-tight text-slate-800 dark:text-white leading-tight">
                 {activeLesson.title}
               </h2>
-              <span className="inline-block bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-full text-xs font-medium text-gray-600 dark:text-gray-300">
+              <span className="inline-block bg-slate-100 dark:bg-slate-800 px-3 py-1 rounded-full text-xs font-medium text-slate-600 dark:text-slate-300">
                 {modules.find(m => m.id === activeLesson.module_id)?.title || 'Module'}
               </span>
             </div>
 
             {/* Content Text */}
             {activeLesson.content_text && (
-              <div className="prose dark:prose-invert max-w-none bg-white dark:bg-gray-900 p-5 md:p-6 rounded-xl md:rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
-                <p className="whitespace-pre-wrap text-sm md:text-base leading-relaxed">{activeLesson.content_text}</p>
+              <div className="px-4 md:px-0 mb-6 md:mb-0 mt-4 md:mt-0">
+                <div className="prose dark:prose-invert max-w-none bg-white dark:bg-slate-900 p-5 md:p-6 rounded-xl md:rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm">
+                  <p className="whitespace-pre-wrap text-sm md:text-base leading-relaxed text-slate-700 dark:text-slate-300">{activeLesson.content_text}</p>
+                </div>
               </div>
             )}
 
             {/* In-App PDF Viewer */}
             {activeLesson.pdf_url && (
-              <div className="w-full h-[500px] md:h-[700px] bg-white rounded-xl md:rounded-2xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-800 flex flex-col">
-                <div className="p-3 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-red-500" />
-                  <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">Lesson PDF Document</span>
+              <div className="px-4 md:px-0 mb-6 md:mb-0 mt-4 md:mt-0">
+                <div className="w-full h-[500px] md:h-[700px] bg-white dark:bg-slate-900 rounded-lg overflow-hidden shadow-sm border border-slate-200 dark:border-slate-800 flex flex-col">
+                  <div className="p-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <span className="text-base font-bold tracking-tight text-slate-800 dark:text-slate-200">Interactive CBLM Reader</span>
+                    </div>
+                  </div>
+                  <iframe 
+                    src={activeLesson.pdf_url} 
+                    title="PDF Document Viewer"
+                    className="w-full flex-1 border-0"
+                  />
                 </div>
-                <iframe 
-                  src={activeLesson.pdf_url} 
-                  title="PDF Document Viewer"
-                  className="w-full flex-1 border-0"
-                />
               </div>
             )}
 
             {/* Support File Details Block */}
             {activeLesson.support_file_url && (
-              <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 p-5 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center shrink-0">
-                    <Download className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <div className="px-4 md:px-0 mb-6 md:mb-0 mt-4 md:mt-0">
+                <div className="bg-blue-50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/30 p-5 md:p-6 rounded-xl md:rounded-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-5">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center shrink-0">
+                      <Download className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-900 dark:text-white text-base md:text-lg">Support Material Available</h3>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1 max-w-xl">
+                        This lesson includes a downloadable support file (such as a ZIP archive, document, or spreadsheet) to help you follow along with the exercises.
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="font-bold text-gray-900 dark:text-white text-base md:text-lg">Support Material Available</h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 max-w-xl">
-                      This lesson includes a downloadable support file (such as a ZIP archive, document, or spreadsheet) to help you follow along with the exercises.
-                    </p>
-                  </div>
+                  <a 
+                    href={activeLesson.support_file_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors shrink-0 flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <Download className="w-4 h-4" /> Download File
+                  </a>
                 </div>
-                <a 
-                  href={activeLesson.support_file_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-blue-600 hover:bg-blue-700 text-white w-full md:w-auto px-6 py-2.5 rounded-lg text-sm font-semibold transition-colors shrink-0 flex items-center justify-center gap-2"
-                >
-                  <Download className="w-4 h-4" /> Download File
-                </a>
               </div>
             )}
           </div>
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center h-full">
-            <div className="w-20 h-20 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mb-4">
-              <PlayCircle className="w-10 h-10 text-gray-400" />
+            <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+              <PlayCircle className="w-10 h-10 text-slate-400" />
             </div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Welcome to {course.title}</h2>
-            <p className="text-gray-500 dark:text-gray-400 max-w-md">
+            <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">Welcome to {course.title}</h2>
+            <p className="text-slate-500 dark:text-slate-400 max-w-md">
               Select a lesson from the curriculum list to start learning.
             </p>
           </div>
@@ -160,58 +168,76 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
       </div>
 
       {/* Sidebar - Course Curriculum (Left on Desktop, Bottom on Mobile) */}
-      <div className="w-full md:w-80 lg:w-96 bg-white dark:bg-gray-900 border-t md:border-t-0 md:border-r border-gray-200 dark:border-gray-800 flex flex-col flex-shrink-0 h-auto md:h-[calc(100vh-64px)]">
-        <div className="p-4 border-b border-gray-200 dark:border-gray-800 hidden md:flex justify-between items-center bg-white dark:bg-gray-900 sticky top-0 z-10">
-          <h2 className="font-bold text-gray-900 dark:text-white truncate">Curriculum</h2>
+      <div className="w-full md:w-80 lg:w-[400px] bg-white dark:bg-slate-900 border-t md:border-t-0 md:border-r border-slate-200 dark:border-slate-800 flex flex-col flex-shrink-0 h-auto md:h-[calc(100vh-64px)] shadow-lg md:shadow-none z-20">
+        <div className="p-5 border-b border-slate-200 dark:border-slate-800 hidden md:flex justify-between items-center bg-white dark:bg-slate-900 sticky top-0 z-10">
+          <h2 className="font-bold text-xl tracking-tight text-slate-900 dark:text-white truncate">Curriculum</h2>
         </div>
         
         {/* Mobile Curriculum Header */}
-        <div className="p-4 bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-800 md:hidden">
-          <h2 className="font-bold text-gray-900 dark:text-white text-lg">Course Curriculum</h2>
-          <p className="text-xs text-gray-500 mt-1">Select a lesson below to view its content.</p>
+        <div className="p-5 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800 md:hidden">
+          <h2 className="font-bold text-xl tracking-tight text-slate-900 dark:text-white">Course Curriculum</h2>
+          <p className="text-sm text-slate-500 mt-1">Select a lesson below to view its content.</p>
         </div>
         
-        <div className="md:overflow-y-auto flex-1 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-700 [&::-webkit-scrollbar-track]:bg-transparent">
+        <div className="md:overflow-y-auto flex-1 [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:bg-slate-300 dark:[&::-webkit-scrollbar-thumb]:bg-slate-700 [&::-webkit-scrollbar-track]:bg-transparent p-4 space-y-4 bg-slate-50 md:bg-transparent dark:bg-slate-950 md:dark:bg-transparent">
           {modules.length > 0 ? (
-            modules.map((moduleItem, mIdx) => (
-              <div key={moduleItem.id} className="border-b border-gray-100 dark:border-gray-800">
+            modules.map((moduleItem, mIdx) => {
+              const isExpanded = expandedModules[moduleItem.id];
+              const hasActiveLesson = lessonsByModule[moduleItem.id]?.some((l: any) => l.id === activeLesson?.id);
+              
+              return (
+              <div key={moduleItem.id} className={`rounded-xl border transition-all duration-300 overflow-hidden ${isExpanded ? 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 shadow-sm' : 'bg-white md:bg-slate-50 dark:bg-slate-900 md:dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700'}`}>
                 <button 
                   onClick={() => toggleModule(moduleItem.id)}
-                  className="w-full flex items-center justify-between p-4 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-800/80 transition-colors text-left"
+                  className="w-full flex items-center justify-between p-4 transition-colors text-left"
                 >
-                  <span className="font-semibold text-sm text-gray-800 dark:text-gray-200 pr-4">{moduleItem.title}</span>
-                  {expandedModules[moduleItem.id] ? <ChevronDown className="w-4 h-4 text-gray-500 shrink-0" /> : <ChevronRight className="w-4 h-4 text-gray-500 shrink-0" />}
+                  <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${hasActiveLesson ? 'bg-blue-100 text-blue-600 dark:bg-blue-900/40 dark:text-blue-400' : 'bg-slate-100 text-slate-500 dark:bg-slate-800 dark:text-slate-400'}`}>
+                      <span className="font-bold text-sm">{mIdx + 1}</span>
+                    </div>
+                    <span className="font-bold text-base text-slate-800 dark:text-slate-200 pr-4 tracking-tight">{moduleItem.title}</span>
+                  </div>
+                  <div className={`transform transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
+                    <ChevronDown className="w-5 h-5 text-slate-400" />
+                  </div>
                 </button>
                 
-                {expandedModules[moduleItem.id] && (
-                  <div className="bg-gray-50/50 dark:bg-gray-950">
-                    {lessonsByModule[moduleItem.id] ? lessonsByModule[moduleItem.id].map((lesson: any, lIdx: number) => {
-                      const isActive = activeLesson?.id === lesson.id;
-                      return (
-                        <button
-                          key={lesson.id}
-                          onClick={() => handleSelectLesson(lesson)}
-                          className={`w-full flex items-start gap-3 p-4 text-left transition-colors border-l-4 ${isActive ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-600' : 'border-transparent hover:bg-gray-100 dark:hover:bg-gray-800/50'}`}
-                        >
-                          <div className={`mt-0.5 shrink-0 ${isActive ? 'text-blue-600' : 'text-gray-400'}`}>
-                            {lesson.video_url ? <PlayCircle className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
-                          </div>
-                          <div>
-                            <p className={`text-sm leading-snug ${isActive ? 'font-bold text-blue-700 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'}`}>
-                              {lIdx + 1}. {lesson.title}
-                            </p>
-                          </div>
-                        </button>
-                      );
-                    }) : (
-                      <div className="p-4 text-sm text-gray-500 pl-11">No lessons in this module.</div>
-                    )}
+                <div className={`grid transition-all duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
+                  <div className="overflow-hidden">
+                    <div className="pb-4 px-3 pt-1 space-y-1">
+                      {lessonsByModule[moduleItem.id] ? lessonsByModule[moduleItem.id].map((lesson: any, lIdx: number) => {
+                        const isActive = activeLesson?.id === lesson.id;
+                        
+                        let Icon = Info;
+                        if (lesson.video_url) Icon = PlayCircle;
+                        else if (lesson.pdf_url) Icon = FileText;
+
+                        return (
+                          <button
+                            key={lesson.id}
+                            onClick={() => handleSelectLesson(lesson)}
+                            className={`w-full flex items-start gap-3 p-3 rounded-lg transition-all text-left ${isActive ? 'bg-blue-50 dark:bg-blue-900/20 shadow-sm ring-1 ring-blue-500/20' : 'hover:bg-slate-50 dark:hover:bg-slate-800/50'}`}
+                          >
+                            <div className={`mt-0.5 shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400'}`}>
+                              <Icon className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <p className={`text-sm leading-snug tracking-tight ${isActive ? 'font-bold text-blue-700 dark:text-blue-300' : 'font-medium text-slate-600 dark:text-slate-400'}`}>
+                                {lesson.title}
+                              </p>
+                            </div>
+                          </button>
+                        );
+                      }) : (
+                        <div className="p-3 text-sm text-slate-500 text-center">No lessons in this module.</div>
+                      )}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
-            ))
+            )})
           ) : (
-            <div className="p-8 text-center text-gray-500 text-sm">
+            <div className="p-8 text-center text-slate-500 text-sm">
               No modules available for this course yet.
             </div>
           )}
