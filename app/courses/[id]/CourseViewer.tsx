@@ -31,11 +31,43 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
 
   const getYoutubeEmbedUrl = (url: string) => {
     if (!url) return null;
+    
+    // Already an embed link
+    if (url.includes('youtube.com/embed/')) return url;
+
+    const formatEmbed = (id: string) => `https://www.youtube.com/embed/${id}?rel=0`;
+
+    try {
+      const urlObj = new URL(url);
+      
+      // Standard and unlisted links: youtube.com/watch?v=...
+      if (urlObj.hostname.includes('youtube.com')) {
+        const v = urlObj.searchParams.get('v');
+        if (v && v.length === 11) return formatEmbed(v);
+        
+        // Handle shorts
+        if (urlObj.pathname.startsWith('/shorts/')) {
+          const id = urlObj.pathname.replace('/shorts/', '').split('?')[0];
+          if (id && id.length === 11) return formatEmbed(id);
+        }
+      }
+      
+      // Shortened links: youtu.be/...
+      if (urlObj.hostname.includes('youtu.be')) {
+        const id = urlObj.pathname.slice(1).split('?')[0];
+        if (id && id.length === 11) return formatEmbed(id);
+      }
+    } catch (e) {
+      // Ignore URL parsing errors and fallback to regex
+    }
+
+    // Ultimate fallback regex for any remaining edge cases
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     const match = url.match(regExp);
     if (match && match[2].length === 11) {
-      return `https://www.youtube.com/embed/${match[2]}?rel=0`;
+      return formatEmbed(match[2]);
     }
+    
     return null;
   };
 
