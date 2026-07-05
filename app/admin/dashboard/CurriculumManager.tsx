@@ -95,6 +95,8 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
         fd.append("file", pdfFile);
         fd.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string);
         fd.append("resource_type", "auto");
+        fd.append("type", "upload");
+        fd.append("access_mode", "public");
         const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: "POST", body: fd });
         if (!res.ok) throw new Error("Failed to upload PDF to Cloudinary");
         const data = await res.json();
@@ -105,6 +107,8 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
         fd.append("file", supportFile);
         fd.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string);
         fd.append("resource_type", "auto");
+        fd.append("type", "upload");
+        fd.append("access_mode", "public");
         const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: "POST", body: fd });
         if (!res.ok) throw new Error("Failed to upload Support File to Cloudinary");
         const data = await res.json();
