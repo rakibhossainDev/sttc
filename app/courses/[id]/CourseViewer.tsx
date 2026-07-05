@@ -46,7 +46,7 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
     <div className="flex flex-col md:flex-row-reverse min-h-[calc(100vh-64px)] bg-slate-50 dark:bg-slate-950 relative">
       
       {/* Main Content Area (Right on Desktop, Top on Mobile) */}
-      <div className="flex-1 flex flex-col w-full h-full md:overflow-y-auto pb-10 md:pb-0">
+      <div className={`flex-1 flex-col w-full h-full md:overflow-y-auto pb-10 md:pb-0 ${activeLesson ? 'flex' : 'hidden md:flex'}`}>
 
         {activeLesson ? (
           hasPdf ? (
@@ -78,11 +78,19 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
               
               {/* Document Container */}
               <div className="w-full flex-1 bg-slate-100 dark:bg-slate-900 flex flex-col h-[calc(100vh-64px)] md:h-auto">
-                <iframe 
-                  src={activeLesson.pdf_url} 
-                  title="PDF Document Viewer"
+                <object 
+                  data={activeLesson.pdf_url} 
+                  type="application/pdf"
                   className="w-full flex-1 border-0"
-                />
+                >
+                  <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-slate-50 dark:bg-slate-900">
+                    <FileText className="w-12 h-12 text-slate-400 mb-4" />
+                    <p className="text-slate-600 dark:text-slate-300 mb-4 font-medium">Unable to load the PDF viewer inline.</p>
+                    <a href={activeLesson.pdf_url} target="_blank" rel="noopener noreferrer" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
+                      <Download className="w-4 h-4" /> Click here to view PDF directly
+                    </a>
+                  </div>
+                </object>
                 
                 {/* Support File Details inside PDF Mode */}
                 {activeLesson.support_file_url && (
@@ -190,12 +198,11 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
           )
         ) : (
           <div className="flex-1 flex flex-col items-center justify-center p-8 text-center h-full">
-            <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
-              <PlayCircle className="w-10 h-10 text-slate-400" />
+            <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
+              <Info className="w-8 h-8 text-slate-400" />
             </div>
-            <h2 className="text-xl font-bold tracking-tight text-slate-900 dark:text-white mb-2">Welcome to {course.title}</h2>
-            <p className="text-slate-500 dark:text-slate-400 max-w-md">
-              Select a lesson from the curriculum list to start learning.
+            <p className="text-slate-500 dark:text-slate-400 font-medium">
+              Select a lesson from the curriculum to begin.
             </p>
           </div>
         )}
