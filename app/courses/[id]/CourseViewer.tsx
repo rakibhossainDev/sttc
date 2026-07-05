@@ -133,8 +133,9 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
             ) : activeLesson.pdf_url ? (
               <div className="w-full px-4 md:px-0 mb-6">
                 <iframe 
+                  key={activeLesson.id}
                   src={`https://docs.google.com/gview?url=${encodeURIComponent(activeLesson.pdf_url)}&embedded=true`}
-                  className="w-full h-[70vh] rounded-xl border border-slate-200 shadow-inner"
+                  className="w-full h-[75vh] rounded-xl border border-slate-200"
                   title="PDF Document Viewer"
                 />
               </div>
