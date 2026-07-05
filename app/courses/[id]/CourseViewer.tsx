@@ -132,12 +132,20 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
               </div>
             ) : activeLesson.pdf_url ? (
               <div className="w-full px-4 md:px-0 mb-6">
-                <iframe 
-                  key={activeLesson.id}
-                  src={`https://docs.google.com/gview?url=${encodeURIComponent(activeLesson.pdf_url)}&embedded=true`}
-                  className="w-full h-[75vh] rounded-xl border border-slate-200"
-                  title="PDF Document Viewer"
-                />
+                <div className="w-full h-[75vh] bg-slate-100 rounded-xl overflow-hidden relative border border-slate-200">
+                  <object
+                    key={activeLesson.id}
+                    data={activeLesson.pdf_url}
+                    type="application/pdf"
+                    className="w-full h-full"
+                  >
+                    <iframe
+                      src={`https://docs.google.com/gview?url=${encodeURIComponent(activeLesson.pdf_url)}&embedded=true`}
+                      className="w-full h-full border-0"
+                      title="PDF Viewer Fallback"
+                    />
+                  </object>
+                </div>
               </div>
             ) : null}
 
