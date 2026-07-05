@@ -17,10 +17,10 @@ export default async function Home() {
   ]);
 
   const popularResources = [
-    { id: 1, title: "Class 1 Notes", type: "pdf", icon: <FileText className="w-8 h-8 text-blue-500 mb-2" /> },
-    { id: 2, title: "Source Code", type: "folder", icon: <Folder className="w-8 h-8 text-yellow-500 mb-2" /> },
-    { id: 3, title: "Design Assets", type: "folder", icon: <Folder className="w-8 h-8 text-yellow-500 mb-2" /> },
-    { id: 4, title: "Cheat Sheet", type: "pdf", icon: <FileText className="w-8 h-8 text-blue-500 mb-2" /> },
+    { id: 1, title: "Class 1 Notes", type: "pdf", icon: <FileText className="w-7 h-7 text-blue-500" /> },
+    { id: 2, title: "Syllabus Handout", type: "pdf", icon: <FileText className="w-7 h-7 text-blue-500" /> },
+    { id: 3, title: "CBLM Worksheets", type: "folder", icon: <Folder className="w-7 h-7 text-yellow-500" /> },
+    { id: 4, title: "Mock Quiz / Practice", type: "pdf", icon: <FileText className="w-7 h-7 text-blue-500" /> },
   ];
 
   const categories = ["All", ...(dbCategories?.filter(c => c.name !== 'All').map(c => c.name) || [])];
@@ -44,13 +44,13 @@ export default async function Home() {
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">Popular Resources</h2>
           </div>
-          <div className="flex overflow-x-auto gap-4 pb-4 -mx-4 px-4 snap-x md:grid md:grid-cols-4 lg:grid-cols-6 md:gap-6 md:overflow-visible md:-mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 md:gap-6">
             {popularResources.map((resource) => (
-              <div key={resource.id} className="flex-shrink-0 snap-start w-32 md:w-auto bg-white p-5 rounded-2xl shadow-[0_2px_8px_rgb(0,0,0,0.04)] border border-gray-100 flex flex-col items-center text-center transition-transform hover:-translate-y-1 hover:shadow-md cursor-pointer group">
-                <div className="p-3 bg-gray-50 rounded-xl group-hover:bg-blue-50 transition-colors duration-300 mb-3">
+              <div key={resource.id} className="bg-white p-4 md:p-5 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center justify-center text-center transition-transform hover:-translate-y-1 hover:shadow-md cursor-pointer group">
+                <div className="p-3 bg-gray-50 rounded-xl group-hover:bg-blue-50 transition-colors duration-300 mb-3 flex items-center justify-center">
                   {resource.icon}
                 </div>
-                <span className="text-sm font-bold text-gray-700 leading-tight group-hover:text-blue-600 transition-colors">
+                <span className="text-xs md:text-sm font-bold text-gray-700 leading-tight group-hover:text-blue-600 transition-colors px-1">
                   {resource.title}
                 </span>
               </div>

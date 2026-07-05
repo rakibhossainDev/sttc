@@ -44,13 +44,13 @@ export default function HomeCourseList({ popularCourses, categories }: { popular
           </Link>
         </div>
         
-        <div className="flex overflow-x-auto gap-5 pb-6 -mx-4 px-4 snap-x md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible md:-mx-0 md:px-0 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+        <div className="flex overflow-x-auto gap-5 pb-6 snap-x md:grid md:grid-cols-2 lg:grid-cols-3 md:gap-8 md:overflow-visible [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
           {filteredCourses && filteredCourses.length > 0 ? (
             filteredCourses.map((course) => {
               const mockProgress = Math.floor(Math.random() * 60) + 10; 
               
               return (
-                <Link href={`/courses/${course.id}`} key={course.id} className="min-w-[280px] shrink-0 snap-start md:min-w-0 md:w-auto block bg-white rounded-2xl shadow-[0_2px_12px_rgb(0,0,0,0.04)] border border-gray-100 hover:shadow-xl hover:-translate-y-2 transition-all duration-300 overflow-hidden group flex flex-col h-full">
+                <Link href={`/courses/${course.id}`} key={course.id} className="min-w-[280px] shrink-0 snap-start md:min-w-0 md:w-auto block bg-white rounded-2xl shadow-md border border-gray-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden group flex flex-col h-full">
                   
                   {/* Card Image */}
                   <div className="h-44 w-full overflow-hidden relative bg-gray-100">
@@ -71,7 +71,7 @@ export default function HomeCourseList({ popularCourses, categories }: { popular
                   
                   {/* Card Content */}
                   <div className="p-5 flex-1 flex flex-col">
-                    <h3 className="font-bold text-gray-900 text-lg leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
+                    <h3 className="font-bold text-gray-900 text-base md:text-lg leading-tight line-clamp-2 group-hover:text-blue-600 transition-colors">
                       {course.title}
                     </h3>
                     <p className="text-sm font-medium text-gray-500 mt-2">{course.instructor_name}</p>
