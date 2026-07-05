@@ -16,8 +16,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Shariatpur TTC",
-  description: "Empowering Skills, Shaping Futures. Your Next Step to Technical Excellence.",
+  title: "Shariatpur TTC - Competency-Based Training Platform",
+  description: "Empowering skills and shaping technical excellence through institutional training and assessment management.",
 };
 
 export const viewport = {

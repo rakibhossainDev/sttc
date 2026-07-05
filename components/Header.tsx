@@ -35,16 +35,11 @@ export default function Header() {
           <Menu className="w-6 h-6" />
         </button>
         
-        <Link href="/" className="absolute left-0 right-0 flex justify-center items-center">
-          <Image 
-            src="/logo.png" 
-            alt="Shariatpur TTC Logo" 
-            width={180} 
-            height={40} 
-            className="object-contain h-8 w-auto"
-            priority
-          />
-        </Link>
+        <div className="absolute left-0 right-0 flex justify-center items-center pointer-events-none">
+          <Link href="/" className="font-bold text-xl tracking-tight text-gray-900 dark:text-white pointer-events-auto">
+            Shariatpur TTC
+          </Link>
+        </div>
         
         <div className="flex items-center gap-2 relative z-10">
           <button
