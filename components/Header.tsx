@@ -5,6 +5,7 @@ import { Menu, X, Home, BookOpen, LayoutDashboard, Settings, HelpCircle, UserCir
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useTheme } from 'next-themes';
+import Image from 'next/image';
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -33,9 +34,17 @@ export default function Header() {
         >
           <Menu className="w-6 h-6" />
         </button>
-        <h1 className="text-lg font-bold text-gray-900 dark:text-white absolute left-0 right-0 text-center pointer-events-none">
-          Shariatpur TTC
-        </h1>
+        
+        <Link href="/" className="absolute left-0 right-0 flex justify-center items-center">
+          <Image 
+            src="/logo.png" 
+            alt="Shariatpur TTC Logo" 
+            width={180} 
+            height={40} 
+            className="object-contain h-8 w-auto"
+            priority
+          />
+        </Link>
         
         <div className="flex items-center gap-2 relative z-10">
           <button

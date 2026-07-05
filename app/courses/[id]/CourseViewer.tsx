@@ -4,7 +4,7 @@ import { useState } from "react";
 import { PlayCircle, FileText, Download, ChevronDown, Info, ArrowLeft } from "lucide-react";
 
 export default function CourseViewer({ course, modules, lessons }: { course: any, modules: any[], lessons: any[] }) {
-  const [activeLesson, setActiveLesson] = useState<any | null>(lessons.length > 0 ? lessons[0] : null);
+  const [activeLesson, setActiveLesson] = useState<any | null>(null);
   
   // Group lessons by module.id
   const lessonsByModule = lessons.reduce((acc: any, lesson: any) => {
@@ -78,19 +78,19 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
               
               {/* Document Container */}
               <div className="w-full flex-1 bg-slate-100 dark:bg-slate-900 flex flex-col h-[calc(100vh-64px)] md:h-auto">
-                <object 
-                  data={activeLesson.pdf_url} 
-                  type="application/pdf"
+                <iframe 
+                  src={`https://docs.google.com/gview?url=${encodeURIComponent(activeLesson.pdf_url)}&embedded=true`}
                   className="w-full flex-1 border-0"
-                >
-                  <div className="flex flex-col items-center justify-center h-full p-8 text-center bg-slate-50 dark:bg-slate-900">
-                    <FileText className="w-12 h-12 text-slate-400 mb-4" />
-                    <p className="text-slate-600 dark:text-slate-300 mb-4 font-medium">Unable to load the PDF viewer inline.</p>
-                    <a href={activeLesson.pdf_url} target="_blank" rel="noopener noreferrer" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm inline-flex items-center gap-2">
-                      <Download className="w-4 h-4" /> Click here to view PDF directly
-                    </a>
-                  </div>
-                </object>
+                  title="PDF Document Viewer"
+                />
+                
+                {/* Fallback button if Google Docs viewer fails or is blocked */}
+                <div className="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex justify-center text-sm">
+                  <span className="text-slate-500 mr-2">Having trouble viewing?</span>
+                  <a href={activeLesson.pdf_url} target="_blank" rel="noopener noreferrer" className="text-blue-600 font-semibold hover:underline flex items-center">
+                    <Download className="w-4 h-4 mr-1" /> Download PDF directly
+                  </a>
+                </div>
                 
                 {/* Support File Details inside PDF Mode */}
                 {activeLesson.support_file_url && (
