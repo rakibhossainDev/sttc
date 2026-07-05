@@ -2,14 +2,6 @@
 
 import { useState } from "react";
 import { PlayCircle, FileText, Download, ChevronDown, Info, ArrowLeft } from "lucide-react";
-import { Worker } from '@react-pdf-viewer/core';
-import '@react-pdf-viewer/core/lib/styles/index.css';
-import dynamic from 'next/dynamic';
-
-const PDFViewer = dynamic(
-  () => import('@react-pdf-viewer/core').then((mod) => mod.Viewer),
-  { ssr: false }
-);
 
 export default function CourseViewer({ course, modules, lessons }: { course: any, modules: any[], lessons: any[] }) {
   const [activeLesson, setActiveLesson] = useState<any | null>(null);
@@ -140,10 +132,12 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
               </div>
             ) : activeLesson.pdf_url ? (
               <div className="w-full px-4 md:px-0 mb-6">
-                <div className="w-full h-[75vh] bg-white rounded-xl border border-slate-200 overflow-y-auto relative">
-                  <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.4.120/build/pdf.worker.min.js">
-                    <PDFViewer fileUrl={activeLesson.pdf_url} />
-                  </Worker>
+                <div className="w-full h-[75vh] bg-white rounded-xl border border-slate-200 overflow-hidden relative shadow-md">
+                  <iframe
+                    src={`${activeLesson.pdf_url}#toolbar=0&navpanes=0`}
+                    className="w-full h-full border-0"
+                    title="Secure CBLM PDF Viewer"
+                  />
                 </div>
               </div>
             ) : null}
