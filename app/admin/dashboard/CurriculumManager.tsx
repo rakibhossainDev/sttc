@@ -93,11 +93,8 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
       if (pdfFile) {
         const fd = new FormData();
         fd.append("file", pdfFile);
-        fd.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string);
-        fd.append("resource_type", "auto");
-        fd.append("type", "upload");
-        fd.append("access_mode", "public");
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: "POST", body: fd });
+        fd.append("upload_preset", "sttc_presets");
+        const res = await fetch(`https://api.cloudinary.com/v1_1/dkdeoh4cu/raw/upload`, { method: "POST", body: fd });
         if (!res.ok) throw new Error("Failed to upload PDF to Cloudinary");
         const data = await res.json();
         finalPdfUrl = data.secure_url;
@@ -105,11 +102,8 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
       if (supportFile) {
         const fd = new FormData();
         fd.append("file", supportFile);
-        fd.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET as string);
-        fd.append("resource_type", "auto");
-        fd.append("type", "upload");
-        fd.append("access_mode", "public");
-        const res = await fetch(`https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/auto/upload`, { method: "POST", body: fd });
+        fd.append("upload_preset", "sttc_presets");
+        const res = await fetch(`https://api.cloudinary.com/v1_1/dkdeoh4cu/raw/upload`, { method: "POST", body: fd });
         if (!res.ok) throw new Error("Failed to upload Support File to Cloudinary");
         const data = await res.json();
         finalSupportFileUrl = data.secure_url;
