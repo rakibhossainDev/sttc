@@ -1,7 +1,11 @@
 import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
-import CourseViewer from "./CourseViewer";
+import dynamic from 'next/dynamic';
 
+const CourseViewer = dynamic(
+  () => import('./CourseViewer'),
+  { ssr: false }
+);
 export const revalidate = 0;
 
 export default async function CoursePage({ params }: { params: Promise<{ id: string }> }) {
