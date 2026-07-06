@@ -21,7 +21,7 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
   const [lessonTitle, setLessonTitle] = useState("");
   const [contentText, setContentText] = useState("");
   const [videoUrl, setVideoUrl] = useState("");
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [pdfUrl, setPdfUrl] = useState("");
   const [supportFile, setSupportFile] = useState<File | null>(null);
 
   useEffect(() => {
@@ -86,19 +86,10 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
     if (!selectedModuleId) return alert("Please select a module");
     setIsSaving(true);
 
-    let finalPdfUrl = null;
+    let finalPdfUrl = pdfUrl.trim() || null;
     let finalSupportFileUrl = null;
 
     try {
-      if (pdfFile) {
-        const fd = new FormData();
-        fd.append("file", pdfFile);
-        fd.append("upload_preset", "sttc_presets");
-        const res = await fetch(`https://api.cloudinary.com/v1_1/dkdeoh4cu/raw/upload`, { method: "POST", body: fd });
-        if (!res.ok) throw new Error("Failed to upload PDF to Cloudinary");
-        const data = await res.json();
-        finalPdfUrl = data.secure_url;
-      }
       if (supportFile) {
         const fd = new FormData();
         fd.append("file", supportFile);
@@ -140,7 +131,7 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
         setLessonTitle("");
         setContentText("");
         setVideoUrl("");
-        setPdfFile(null);
+        setPdfUrl("");
         setSupportFile(null);
         setShowLessonForm(false);
       }
@@ -245,12 +236,12 @@ export default function CurriculumManager({ courseId, courseTitle, onBack }: { c
               <textarea placeholder="Write lesson notes, description, or instructions..." value={contentText} onChange={e => setContentText(e.target.value)} className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none resize-none" rows={3} />
             </div>
 
-            {/* Cloudinary Upload Wrappers */}
+            {/* PDF Link Input & Support File Upload */}
             <div className="bg-blue-50/50 dark:bg-blue-900/10 p-5 rounded-xl border border-blue-100 dark:border-blue-800/30">
               <label className="flex items-center gap-2 text-sm font-semibold text-blue-800 dark:text-blue-300 mb-3">
-                <FileText className="w-4 h-4" /> PDF Notes File (Cloudinary)
+                <FileText className="w-4 h-4" /> PDF Document URL
               </label>
-              <input type="file" accept=".pdf" onChange={e => setPdfFile(e.target.files?.[0] || null)} className="w-full text-sm text-gray-600 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 transition-colors file:cursor-pointer cursor-pointer" />
+              <input type="url" placeholder="e.g., Google Drive public link, Dropbox link, or raw pdf url" value={pdfUrl} onChange={e => setPdfUrl(e.target.value)} className="w-full bg-white dark:bg-gray-800 border border-blue-200 dark:border-blue-800/50 rounded-xl px-4 py-3 text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all outline-none" />
             </div>
 
             <div className="bg-green-50/50 dark:bg-green-900/10 p-5 rounded-xl border border-green-100 dark:border-green-800/30">

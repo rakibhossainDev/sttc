@@ -132,12 +132,13 @@ export default function CourseViewer({ course, modules, lessons }: { course: any
               </div>
             ) : activeLesson.pdf_url ? (
               <div className="w-full px-4 md:px-0 mb-6">
-                <div className="w-full h-[75vh] bg-slate-50 rounded-xl border border-slate-200 overflow-hidden relative shadow-md">
-                  <embed
-                    src={`${activeLesson.pdf_url}#toolbar=0&navpanes=0`}
-                    type="application/pdf"
-                    className="w-full h-full"
+                <div className="w-full h-[75vh] bg-white rounded-xl border border-slate-200 overflow-hidden relative shadow-md">
+                  <iframe
+                    src={activeLesson.pdf_url}
+                    className="w-full h-full border-0"
+                    title="CBLM Document Reader"
                     key={activeLesson.id}
+                    allow="autoplay"
                   />
                 </div>
               </div>
